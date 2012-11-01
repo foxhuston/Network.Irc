@@ -3,10 +3,11 @@ module Network.Irc.Configuration (Configuration
 
 where
 
+import Data.Text
 import Network.Irc.Types
 
 data Configuration = Configure {
-    nick :: String,
-    user :: String,
+    nick :: Text,
+    user :: Text,
     privMessageHandler :: (Channel -> Nick -> Message -> Maybe (Channel, Message))
 }

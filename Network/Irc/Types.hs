@@ -4,6 +4,8 @@ module Network.Irc.Types
      Message)
 where
 
-type Nick = String
-type Channel = String
-type Message = String
+import Data.Text
+
+type Nick = Text
+type Channel = Text
+type Message = Text
