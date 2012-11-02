@@ -1,13 +1,22 @@
-module Network.Irc.Configuration (Configuration 
-    (Configure, nick, user, privMessageHandler))
+module Network.Irc.Configuration
+    (Configuration (nick, user, privMessageHandler),
+     EchoBotConfiguration (EchoBotConfiguration))
 
 where
 
 import Data.Text
 import Network.Irc.Types
 
-data Configuration = Configure {
-    nick :: Text,
-    user :: Text,
-    privMessageHandler :: (Channel -> Nick -> Message -> Maybe (Channel, Message))
-}
+class Configuration c where
+    nick :: c -> Text
+    nick _ = "TestBot"
+
+    user :: c -> Text
+    user _ = "Test Bot Test"
+
+    privMessageHandler :: c -> (Channel -> Nick -> Message -> Maybe (Channel, Message))
+    privMessageHandler _ = (\c _ m -> Just (c, m))
+
+data EchoBotConfiguration = EchoBotConfiguration
+
+instance Configuration EchoBotConfiguration
