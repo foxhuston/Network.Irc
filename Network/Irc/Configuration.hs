@@ -24,15 +24,3 @@ class Configuration c where
     port :: c -> Int
 
     defaultChannel :: c -> Text
-
-data EchoBotConfiguration = EchoBotConfiguration
-
-instance Configuration EchoBotConfiguration where
-
-    privMessageHandler _ = (\c _ m -> Just (c, m))
-
-    server _ = "aye.ayecapta.in"
-
-    port _ = 7000
-
-    defaultChannel _ = "#bottest"
