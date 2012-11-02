@@ -18,7 +18,7 @@ privMsgParser = do
     channel <- takeTill $ \x -> x == ' '
     string " :"
     message <- takeText
-    return (nick, channel, message)
+    return (channel, nick, message)
 
 parsePrivMsg :: Text -> (Text, Text, Text)
 parsePrivMsg input =

@@ -1,5 +1,5 @@
 module Network.Irc.Configuration
-    (Configuration (nick, user, privMessageHandler),
+    (Configuration (nick, user, privMessageHandler, server, port, defaultChannel),
      EchoBotConfiguration (EchoBotConfiguration))
 
 where
@@ -15,8 +15,21 @@ class Configuration c where
     user _ = "Test Bot Test"
 
     privMessageHandler :: c -> (Channel -> Nick -> Message -> Maybe (Channel, Message))
-    privMessageHandler _ = (\c _ m -> Just (c, m))
+
+    server :: c -> String
+
+    port :: c -> Int
+
+    defaultChannel :: c -> Text
 
 data EchoBotConfiguration = EchoBotConfiguration
 
-instance Configuration EchoBotConfiguration
+instance Configuration EchoBotConfiguration where
+
+    privMessageHandler _ = (\c _ m -> Just (c, m))
+
+    server _ = "aye.ayecapta.in"
+
+    port _ = 7000
+
+    defaultChannel _ = "#bottest"

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Network.Irc.Run (run) where
+module Network.Irc.Run (run, generateLoginInfo) where
 
 import Data.Text
 
@@ -16,6 +16,8 @@ maybeGenerateMessage Nothing _ = Nothing
 maybeGenerateMessage (Just (channel, message)) conf = return $
     Data.Text.concat ["PRIVMSG ", channel, " :", message]
 
+generateLoginInfo :: Configuration c => c -> Text
+generateLoginInfo conf = Data.Text.concat ["USER * . 0 :", C.user conf, "\r\n", "NICK ", C.nick conf, "\r\n", "JOIN ", C.defaultChannel conf, "\r\n"]
 
 run :: Configuration c => Text -> c -> Maybe Text
 run rawInput conf
