@@ -1,5 +1,5 @@
 module Network.Irc.Configuration
-    (Configuration (nick, user, privMessageHandler, server, port, defaultChannel),
+    (Configuration (nick, user, privMessageHandler, server, port, defaultChannel, pingMessageHandler),
      EchoBotConfiguration (EchoBotConfiguration))
 
 where
@@ -15,6 +15,9 @@ class Configuration c where
     user _ = "Test Bot Test"
 
     privMessageHandler :: c -> (Channel -> Nick -> Message -> Maybe (Channel, Message))
+
+    pingMessageHandler :: c -> (Text -> Maybe Text)
+    pingMessageHandler _ = \t -> Just $ Data.Text.concat ["PONG ", t]
 
     server :: c -> String
 

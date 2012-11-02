@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Network.Irc.Parse (isPrivMsg, parsePrivMsg) where
+module Network.Irc.Parse (isPrivMsg, parsePrivMsg, parsePing) where
 
 import Data.Text
 
@@ -20,9 +20,13 @@ privMsgParser = do
     message <- takeText
     return (channel, nick, message)
 
-parsePrivMsg :: Text -> (Text, Text, Text)
-parsePrivMsg input =
-    let
-        output (Done _ r) = r
-        output (Partial f) = output $ f ""
-    in output $ parse privMsgParser input
+parsePrivMsg :: Text -> Either String (Text, Text, Text)
+parsePrivMsg input = parseOnly privMsgParser input
+
+pingParser :: Parser Text
+pingParser = do
+    string "PING "
+    takeText
+
+parsePing :: Text -> Either String Text
+parsePing input = parseOnly pingParser input
