@@ -1,6 +1,7 @@
 module Network.Irc.Configuration
-    (Configuration (nick, user, privMessageHandler, server, port, defaultChannel, pingMessageHandler),
-     EchoBotConfiguration (EchoBotConfiguration))
+    (Configuration 
+        (nick, user, privMessageHandler, server, port, defaultChannel, pingMessageHandler),
+     generateLoginInfo)
 
 where
 
@@ -8,19 +9,26 @@ import Data.Text
 import Network.Irc.Types
 
 class Configuration c where
-    nick :: c -> Text
+    nick :: c s -> Text
     nick _ = "TestBot"
 
-    user :: c -> Text
+    user :: c s -> Text
     user _ = "Test Bot Test"
 
-    privMessageHandler :: c -> (Channel -> Nick -> Message -> Maybe (Channel, Message))
+    privMessageHandler :: c s -> (Message -> BotState s)
 
-    pingMessageHandler :: c -> (Text -> Maybe Text)
-    pingMessageHandler _ = \t -> Just $ Data.Text.concat ["PONG ", t]
+    pingMessageHandler :: c s -> (Message -> BotState s)
+    pingMessageHandler _ = \(Ping t) -> return $ Just $ Pong t
 
-    server :: c -> String
+    server :: c s -> String
 
-    port :: c -> Int
+    port :: c s -> Int
 
-    defaultChannel :: c -> Text
+    defaultChannel :: c s-> Text
+
+generateLoginInfo :: Configuration c => c s -> Text
+generateLoginInfo conf = Data.Text.concat 
+    ["USER * . 0 :", user conf,
+     "\r\n", "NICK ", nick conf,
+     "\r\n", "JOIN ", defaultChannel conf,
+     "\r\n"]

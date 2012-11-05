@@ -1,16 +1,13 @@
-{-# LANGUAGE OverloadedStrings #-}
-
-module Network.Irc.Parse (isPrivMsg, parsePrivMsg, parsePing) where
+module Network.Irc.Parse (parsePrivMsg, parsePing) where
 
 import Data.Text
 
 import Data.Attoparsec.Text
 import Data.Attoparsec.Combinator
 
-isPrivMsg :: Text -> Bool
-isPrivMsg = isInfixOf " PRIVMSG "
+import Network.Irc.Types
 
-privMsgParser :: Parser (Text, Text, Text)
+privMsgParser :: Parser Message
 privMsgParser = do
     char ':'
     nick <- takeTill $ \x -> x == '!'
@@ -18,15 +15,16 @@ privMsgParser = do
     channel <- takeTill $ \x -> x == ' '
     string " :"
     message <- takeText
-    return (channel, nick, message)
+    return $ PrivMsg channel nick message
 
-parsePrivMsg :: Text -> Either String (Text, Text, Text)
+parsePrivMsg :: Text -> Either String Message
 parsePrivMsg input = parseOnly privMsgParser input
 
-pingParser :: Parser Text
+pingParser :: Parser Message
 pingParser = do
     string "PING "
-    takeText
+    pingMsg <- takeText
+    return $ Ping pingMsg
 
-parsePing :: Text -> Either String Text
+parsePing :: Text -> Either String Message
 parsePing input = parseOnly pingParser input
